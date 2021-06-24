@@ -10,6 +10,8 @@ extern "C" {
 #include <assert.h>
 #include <string.h>
 
+#define STRNPOS -1
+
 /*
  * Definition of string internal storage.
  * The string internal storage object will contain the string
@@ -144,9 +146,40 @@ static void cpush_back(struct dstring_t* THIS, char c)
 	if (THIS->data->size + 2 >= THIS->data->capacity)
 		reallocate(THIS->data, THIS->data->size + 2);
 
-	if (THIS->data->buffer == NULL) return;
+	if (NULL == THIS->data->buffer) return;
 	THIS->data->buffer[THIS->data->size] = c;
 	THIS->data->buffer[THIS->data->size + 1] = '\0';
+}
+
+static void spush_back(struct dstring_t* THIS, const char* str)
+{
+	if (NULL == THIS) return;
+	// Appendable string length
+	size_t len = strlen(str);
+	if (THIS->data->size + len + 2 >= THIS->data->capacity)
+		reallocate(THIS->data, THIS->data->size + len + 2);
+
+	if (NULL == THIS->data->buffer) return;
+
+	// Updating size
+	THIS->data->size += len;
+
+	strcat(THIS->data->buffer, str);
+	THIS->data->buffer[THIS->data->size + 1] = '\0';
+}
+
+static int cfind(struct dstring_t* THIS, char c)
+{
+	if (NULL == THIS || NULL == THIS->data->buffer) return STRNPOS;
+	char* found = strchr(THIS->data->buffer, c);
+	return NULL == found ? STRNPOS : found - THIS->data->buffer;
+}
+
+static int sfind(struct dstring_t* THIS, const char* str)
+{
+	if (NULL == THIS || NULL == THIS->data->buffer) return STRNPOS;
+	char* found = strstr(THIS->data->buffer, str);
+	return NULL == found ? STRNPOS : found - THIS->data->buffer;
 }
 
 // Removes all characters from the string
@@ -184,6 +217,9 @@ String* string_create()
 	str->empty = &empty;
 	str->pop_back = &pop_back;
 	str->cpush_back = &cpush_back;
+	str->spush_back = &spush_back;
+	str->cfind = &cfind;
+	str->sfind = &sfind;
 	str->clear = &clear;
 
 	return str;

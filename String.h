@@ -29,7 +29,10 @@ extern "C" {
 
 		void (*pop_back)(struct dstring_t* THIS);
 		void (*cpush_back)(struct dstring_t* THIS, char c);
-		//void (*spush_back)(struct dstring_t* THIS, const char* str);
+		void (*spush_back)(struct dstring_t* THIS, const char* str);
+
+		int (*cfind)(struct dstring_t* THIS, char c);
+		int (*sfind)(struct dstring_t* THIS, const char* str);
 
 		void (*clear)(struct dstring_t* THIS);
 	} String;

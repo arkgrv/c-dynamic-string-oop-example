@@ -11,6 +11,8 @@ int main(void)
 	printf("%s\n", str->get(str));
 	str->pop_back(str);
 	printf("%s\n", str->get(str));
+	str->spush_back(str, "Test Test String Cat");
+	printf("%s\n", str->get(str));
 	string_delete(str);
 	return 0;
 }
