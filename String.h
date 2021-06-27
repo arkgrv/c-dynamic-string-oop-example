@@ -30,6 +30,8 @@ extern "C" {
 		void (*pop_back)(struct dstring_t* THIS);
 		void (*cpush_back)(struct dstring_t* THIS, char c);
 		void (*spush_back)(struct dstring_t* THIS, const char* str);
+        
+        char (*at)(struct dstring_t* THIS, int pos);
 
 		int (*cfind)(struct dstring_t* THIS, char c);
 		int (*sfind)(struct dstring_t* THIS, const char* str);

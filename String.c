@@ -27,7 +27,7 @@ struct storage_t {
 /**
  * Auxiliary function to calculate next allocation size in bytes.
 */
-inline static uint32_t newsize(uint32_t size)
+inline static uint32_t nsize(uint32_t size)
 {
 	--size;
 	size |= size >> 1;
@@ -41,6 +41,7 @@ inline static uint32_t newsize(uint32_t size)
 
 void reallocate(struct storage_t* str, uint32_t newsize)
 {
+    newsize = nsize(newsize);
 	char* tmp = realloc(str->buffer, sizeof(char) * newsize);
 	if (NULL != tmp) str->buffer = tmp;
 #ifdef DEBUG
@@ -85,7 +86,7 @@ static int empty(const struct dstring_t* THIS)
 	if (NULL == THIS) return 1;
 	uint32_t i;
 	for (i = 0; i < THIS->data->size; ++i) {
-		if ('\0' != THIS->data->buffer) return 0;
+		if ('\0' != THIS->data->buffer[i]) return 0;
 	}
 	return 1;
 }
@@ -180,6 +181,12 @@ static int sfind(struct dstring_t* THIS, const char* str)
 	if (NULL == THIS || NULL == THIS->data->buffer) return STRNPOS;
 	char* found = strstr(THIS->data->buffer, str);
 	return NULL == found ? STRNPOS : found - THIS->data->buffer;
+}
+    
+static char at(struct dstring_t* THIS, int pos)
+{
+    if (NULL == THIS || pos < 0 || pos > size(THIS)) return '\0';
+    return THIS->data->buffer[pos];
 }
 
 // Removes all characters from the string
