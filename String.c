@@ -27,7 +27,7 @@ struct storage_t {
 /**
  * Auxiliary function to calculate next allocation size in bytes.
 */
-inline static uint32_t nsize(uint32_t size)
+inline static int nsize(int size)
 {
 	--size;
 	size |= size >> 1;
@@ -66,7 +66,7 @@ static int compare(const struct dstring_t* THIS, const struct dstring_t* other)
 }
 
 // Returns the size of the string (length)
-static uint32_t size(const struct dstring_t* THIS)
+static int size(const struct dstring_t* THIS)
 {
 	if (NULL == THIS) return 0;
 	return THIS->data->size;
@@ -74,7 +74,7 @@ static uint32_t size(const struct dstring_t* THIS)
 
 // Returns the effective size of the string in bytes. This represents
 // the memory space taken by the string.
-static uint32_t capacity(const struct dstring_t* THIS)
+static int capacity(const struct dstring_t* THIS)
 {
 	if (NULL == THIS) return 0;
 	return THIS->data->capacity;
@@ -89,6 +89,29 @@ static int empty(const struct dstring_t* THIS)
 		if ('\0' != THIS->data->buffer[i]) return 0;
 	}
 	return 1;
+}
+    
+// Reserves memory for the string
+static void reserve(struct dstring_t* THIS, int size)
+{
+    if (NULL == THIS || NULL == THIS->data) return;
+    char* buf = realloc(THIS->data->buffer, sizeof(char) * nsize(size));
+    if (NULL == buf) return;
+    THIS->data->buffer = buf;
+    THIS->data->capacity = size;
+}
+    
+// Resizes the string, truncating to the end value if the size
+// is less than the preallocated string, or filling in with
+// zero values if the string is needed to grow
+static void resize(struct dstring_t* THIS, int new_size)
+{
+    if (NULL == THIS || NULL == THIS->data) return;
+    char* buf = realloc(THIS->data->buffer, size);
+    if (NULL == buf) return;
+    THIS->data->buffer = buf;
+    THIS->data->size = new_size;
+    THIS->data->capacity = new_size;
 }
 
 // Assigns a new value to the string, as a const char* parameter
@@ -188,6 +211,30 @@ static char at(struct dstring_t* THIS, int pos)
     if (NULL == THIS || pos < 0 || pos > size(THIS)) return '\0';
     return THIS->data->buffer[pos];
 }
+    
+static char front(struct dstring_t* THIS)
+{
+    if (NULL == THIS) return '\0';
+    return *(THIS->data->buffer);
+}
+    
+static char back(struct dstring_t* THIS)
+{
+    if (NULL == THIS) return '\0';
+    return *(THIS->data->buffer + (THIS->data->size - 1));
+}
+    
+static char* begin(struct dstring_t* THIS)
+{
+    if (NULL == THIS) return NULL;
+    return THIS->data->buffer;
+}
+    
+static char* end(struct dstring_t* THIS)
+{
+    if (NULL == THIS) return NULL;
+    return (THIS->data->buffer + (THIS->data->size - 1));
+}
 
 // Removes all characters from the string
 static void clear(struct dstring_t* THIS)
@@ -221,6 +268,8 @@ String* string_create()
 	str->compare = &compare;
 	str->size = &size;
 	str->capacity = &capacity;
+    str->reserve = &reserve;
+    str->resize = &resize;
 	str->empty = &empty;
 	str->pop_back = &pop_back;
 	str->cpush_back = &cpush_back;
@@ -228,6 +277,11 @@ String* string_create()
 	str->cfind = &cfind;
 	str->sfind = &sfind;
 	str->clear = &clear;
+    str->at = &at;
+    str->front = &front;
+    str->back = &back;
+    str->begin = &begin;
+    str->end = &end;
 
 	return str;
 }

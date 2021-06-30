@@ -20,9 +20,12 @@ extern "C" {
 
 		int (*compare)(const struct dstring_t* THIS, const struct dstring_t* other);
 
-		uint32_t (*size)(const struct dstring_t* THIS);
-		uint32_t (*capacity)(const struct dstring_t* THIS);
+		int (*size)(const struct dstring_t* THIS);
+		int (*capacity)(const struct dstring_t* THIS);
 		int (*empty)(const struct dstring_t* THIS);
+        
+        void (*reserve)(struct dstring_t* THIS, int size);
+        void (*resize)(struct dstring_t* THIS, int new_size);
 
 		void (*assign)(struct dstring_t* THIS, const char* str);
 		const char* (*get)(const struct dstring_t* THIS);
@@ -32,6 +35,11 @@ extern "C" {
 		void (*spush_back)(struct dstring_t* THIS, const char* str);
         
         char (*at)(struct dstring_t* THIS, int pos);
+        char (*front)(struct dstring_t* THIS);
+        char (*back)(struct dstring_t* THIS);
+        
+        char* (*begin)(struct dstring_t* THIS);
+        char* (*end)(struct dstring_t* THIS);
 
 		int (*cfind)(struct dstring_t* THIS, char c);
 		int (*sfind)(struct dstring_t* THIS, const char* str);
