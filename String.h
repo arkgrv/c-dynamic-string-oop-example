@@ -1,8 +1,6 @@
 #ifndef STRING_C_H
 #define STRING_C_H
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

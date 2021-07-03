@@ -107,7 +107,7 @@ static void reserve(struct dstring_t* THIS, int size)
 static void resize(struct dstring_t* THIS, int new_size)
 {
     if (NULL == THIS || NULL == THIS->data) return;
-    char* buf = realloc(THIS->data->buffer, size);
+    char* buf = realloc(THIS->data->buffer, new_size);
     if (NULL == buf) return;
     THIS->data->buffer = buf;
     THIS->data->size = new_size;

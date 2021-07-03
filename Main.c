@@ -42,6 +42,9 @@ int main(void)
     // This will append a string to the end of the current object.
 	str->spush_back(str, "Test Test String Cat");
 	printf("%s\n", str->get(str));
+
+    str->spush_back(str, "Elisabetta non fa un cazzo dal mattino alla sera!!!!");
+    printf("%s\n", str->get(str));
     
     // Destroys the string object.
 	string_delete(str);
