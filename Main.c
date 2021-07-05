@@ -43,7 +43,7 @@ int main(void)
 	str->spush_back(str, "Test Test String Cat");
 	printf("%s\n", str->get(str));
 
-    str->spush_back(str, "Elisabetta non fa un cazzo dal mattino alla sera!!!!");
+    str->spush_back(str, "Prova prova prova ciao come stai");
     printf("%s\n", str->get(str));
     
     // Destroys the string object.
